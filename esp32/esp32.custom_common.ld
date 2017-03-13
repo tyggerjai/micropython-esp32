@@ -19,9 +19,11 @@ SECTIONS
   */
   .rtc.data :
   {
+    _rtc_data_start = ABSOLUTE(.);
     *(.rtc.data)
     *(.rtc.rodata)
     *rtc_wake_stub*.o(.data .rodata .data.* .rodata.* .bss .bss.*)
+    _rtc_data_end = ABSOLUTE(.);
   } > rtc_slow_seg
 
   /* RTC bss, from any source file named rtc_wake_stub*.c */
@@ -78,10 +80,17 @@ SECTIONS
     *(.iram1 .iram1.*)
     *freertos/*(.literal .text .literal.* .text.*)
     *esp32/panic.o(.literal .text .literal.* .text.*)
+    *esp32/core_dump.o(.literal .text .literal.* .text.*)
     *libphy.a:(.literal .text .literal.* .text.*)
     *librtc.a:(.literal .text .literal.* .text.*)
-    *libpp.a:(.literal .text .literal.* .text.*)
+    *librtc_clk.a:(.literal .text .literal.* .text.*)
+    *libpp.a:pp.o(.literal .text .literal.* .text.*)
+    *libpp.a:lmac.o(.literal .text .literal.* .text.*)
+    *libpp.a:wdev.o(.literal .text .literal.* .text.*)
+    *libcore.a:ets_timer.o(.literal .text .literal.* .text.*)
+    *libnet80211.a:ieee80211_misc.o(.literal .text .literal.* .text.*)
     *libhal.a:(.literal .text .literal.* .text.*)
+    *libcoexist.a:(.literal .text .literal.* .text.*)
     _iram_text_end = ABSOLUTE(.);
   } > iram0_0_seg
 

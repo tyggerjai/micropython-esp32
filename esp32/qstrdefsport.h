@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -27,5 +27,4 @@
 // qstrs specific to this port, only needed if they aren't auto-generated
 
 // Entries for sys.path
-Q(/)
-Q(/lib)
+Q(/flash/lib)

@@ -109,6 +109,7 @@ void mpz_set_from_ll(mpz_t *z, long long i, bool is_signed);
 void mpz_set_from_float(mpz_t *z, mp_float_t src);
 #endif
 mp_uint_t mpz_set_from_str(mpz_t *z, const char *str, mp_uint_t len, bool neg, mp_uint_t base);
+void mpz_set_from_bytes(mpz_t *z, bool big_endian, mp_uint_t len, const byte *buf);
 
 bool mpz_is_zero(const mpz_t *z);
 int mpz_cmp(const mpz_t *lhs, const mpz_t *rhs);
@@ -122,6 +123,7 @@ void mpz_add_inpl(mpz_t *dest, const mpz_t *lhs, const mpz_t *rhs);
 void mpz_sub_inpl(mpz_t *dest, const mpz_t *lhs, const mpz_t *rhs);
 void mpz_mul_inpl(mpz_t *dest, const mpz_t *lhs, const mpz_t *rhs);
 void mpz_pow_inpl(mpz_t *dest, const mpz_t *lhs, const mpz_t *rhs);
+void mpz_pow3_inpl(mpz_t *dest, const mpz_t *lhs, const mpz_t *rhs, const mpz_t *mod);
 void mpz_and_inpl(mpz_t *dest, const mpz_t *lhs, const mpz_t *rhs);
 void mpz_or_inpl(mpz_t *dest, const mpz_t *lhs, const mpz_t *rhs);
 void mpz_xor_inpl(mpz_t *dest, const mpz_t *lhs, const mpz_t *rhs);
