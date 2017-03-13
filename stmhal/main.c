@@ -27,15 +27,10 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "py/nlr.h"
-#include "py/lexer.h"
-#include "py/parse.h"
-#include "py/obj.h"
 #include "py/runtime.h"
 #include "py/stackctrl.h"
 #include "py/gc.h"
 #include "py/mphal.h"
-
 #include "lib/utils/pyexec.h"
 #include "lib/oofatfs/ff.h"
 #include "extmod/vfs.h"
@@ -76,10 +71,10 @@ void flash_error(int n) {
     for (int i = 0; i < n; i++) {
         led_state(PYB_LED_RED, 1);
         led_state(PYB_LED_GREEN, 0);
-        HAL_Delay(250);
+        mp_hal_delay_ms(250);
         led_state(PYB_LED_RED, 0);
         led_state(PYB_LED_GREEN, 1);
-        HAL_Delay(250);
+        mp_hal_delay_ms(250);
     }
     led_state(PYB_LED_GREEN, 0);
 }
@@ -354,7 +349,7 @@ STATIC uint update_reset_mode(uint reset_mode) {
             if (!switch_get()) {
                 break;
             }
-            HAL_Delay(20);
+            mp_hal_delay_ms(20);
             if (i % 30 == 29) {
                 if (++reset_mode > 3) {
                     reset_mode = 1;
@@ -369,13 +364,13 @@ STATIC uint update_reset_mode(uint reset_mode) {
             led_state(2, 0);
             led_state(3, 0);
             led_state(4, 0);
-            HAL_Delay(50);
+            mp_hal_delay_ms(50);
             led_state(2, reset_mode & 1);
             led_state(3, reset_mode & 2);
             led_state(4, reset_mode & 4);
-            HAL_Delay(50);
+            mp_hal_delay_ms(50);
         }
-        HAL_Delay(400);
+        mp_hal_delay_ms(400);
 
 #elif defined(MICROPY_HW_LED1)
 
@@ -388,11 +383,11 @@ STATIC uint update_reset_mode(uint reset_mode) {
                     break;
                 }
                 led_state(1, 1);
-                HAL_Delay(100);
+                mp_hal_delay_ms(100);
                 led_state(1, 0);
-                HAL_Delay(200);
+                mp_hal_delay_ms(200);
             }
-            HAL_Delay(400);
+            mp_hal_delay_ms(400);
             if (!switch_get()) {
                 break;
             }
@@ -404,11 +399,11 @@ STATIC uint update_reset_mode(uint reset_mode) {
         for (uint i = 0; i < 2; i++) {
             for (uint j = 0; j < reset_mode; j++) {
                 led_state(1, 1);
-                HAL_Delay(100);
+                mp_hal_delay_ms(100);
                 led_state(1, 0);
-                HAL_Delay(200);
+                mp_hal_delay_ms(200);
             }
-            HAL_Delay(400);
+            mp_hal_delay_ms(400);
         }
 #else
 #error Need a reset mode update method
@@ -568,7 +563,10 @@ soft_reset:
 #if MICROPY_HW_HAS_SDCARD
     // if an SD card is present then mount it on /sd/
     if (sdcard_is_present()) {
-        mounted_sdcard = init_sdcard_fs(first_soft_reset);
+        // if there is a file in the flash called "SKIPSD", then we don't mount the SD card
+        if (!mounted_flash || f_stat(&fs_user_mount_flash.fatfs, "/SKIPSD", NULL) != FR_OK) {
+            mounted_sdcard = init_sdcard_fs(first_soft_reset);
+        }
     }
 #endif
 
@@ -691,6 +689,10 @@ soft_reset_exit:
 #if MICROPY_HW_ENABLE_CAN
     can_deinit();
 #endif
+
+    #if MICROPY_PY_THREAD
+    pyb_thread_deinit();
+    #endif
 
     first_soft_reset = false;
     goto soft_reset;

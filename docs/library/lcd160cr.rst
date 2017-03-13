@@ -103,7 +103,8 @@ Setup commands
 
 .. method:: LCD160CR.set_power(on)
 
-    Turn the display on or off, depending on the given value.
+    Turn the display on or off, depending on the given value of `on`: 0 or `False`
+    will turn the display off, and 1 or `True` will turn it on.
 
 .. method:: LCD160CR.set_orient(orient)
 
@@ -340,7 +341,9 @@ Advanced commands
 
 .. method:: LCD160CR.jpeg(buf)
 
-    Display a JPEG.  `buf` should contain the entire JPEG data.
+    Display a JPEG.  `buf` should contain the entire JPEG data. JPEG data should
+    not include EXIF information. The following encodings are supported: Baseline
+    DCT, Huffman coding, 8 bits per sample, 3 color components, YCbCr4:2:2.
     The origin of the JPEG is set by :meth:`LCD160CR.set_pos`.
 
 .. method:: LCD160CR.jpeg_start(total_len)
